@@ -6,8 +6,7 @@ import { X, Download, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Particles } from "@/components/ui/highlighter";
 
 export default function ExitIntentPopup() {
-  // TEMP: Set to true to preview popup, set back to false for production
-  const [isVisible, setIsVisible] = useState(true);
+  const [isVisible, setIsVisible] = useState(false);
   const [email, setEmail] = useState("");
   const [isSubmitted, setIsSubmitted] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
