@@ -1,0 +1,16 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 280 76">
+  <defs>
+    <linearGradient id="makeGrad" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#6D00CC"/>
+      <stop offset="100%" style="stop-color:#DB1F8F"/>
+    </linearGradient>
+  </defs>
+  <!-- Domino icon -->
+  <g fill="url(#makeGrad)">
+    <rect x="2" y="20" width="14" height="40" rx="3" transform="rotate(-15 9 40)"/>
+    <rect x="22" y="14" width="14" height="46" rx="3" transform="rotate(-8 29 37)"/>
+    <rect x="42" y="10" width="14" height="50" rx="3"/>
+  </g>
+  <!-- Text -->
+  <text x="70" y="52" font-family="system-ui, -apple-system, sans-serif" font-size="46" font-weight="700" fill="url(#makeGrad)">make</text>
+</svg>
