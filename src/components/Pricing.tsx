@@ -298,7 +298,7 @@ export default function Pricing() {
             Meer strippen nodig?{" "}
             <button
               onClick={openWaitlist}
-              className="block sm:inline mt-1 sm:mt-0 text-violet-600 font-semibold hover:text-violet-700 transition-colors cursor-pointer"
+              className="block sm:inline mx-auto sm:mx-0 mt-1 sm:mt-0 text-violet-600 font-semibold hover:text-violet-700 transition-colors cursor-pointer"
             >
               Zet je op de wachtlijst
             </button>
