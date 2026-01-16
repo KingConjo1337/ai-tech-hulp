@@ -270,7 +270,7 @@ export default function TakenPage() {
                 <div className="flex items-center gap-3 w-full sm:w-auto">
                   <div className="hidden md:block text-right">
                     <p className="text-sm font-semibold text-gray-900">Klaar om te starten?</p>
-                    <p className="text-xs text-gray-500">Al vanaf €799/maand</p>
+                    <p className="text-xs text-gray-500">Al vanaf €699/maand</p>
                   </div>
                   <Link
                     href="/#prijzen"

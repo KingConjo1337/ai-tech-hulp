@@ -10,7 +10,6 @@ import {
   Rocket,
   Building2,
   ArrowRight,
-  Shield,
   Ticket,
   Info,
 } from "lucide-react";
@@ -18,10 +17,12 @@ import { useWaitlist } from "@/context/WaitlistContext";
 
 const plans = [
   {
-    name: "Starter",
-    subtitle: "Perfect om te beginnen",
-    price: "799",
+    name: "Support",
+    subtitle: "Jouw technische helpdesk",
+    description: "Voor teams die tech-vragen willen uitbesteden",
+    price: "699",
     taken: 3,
+    bonusTaken: 1,
     hours: "~9 uur",
     popular: false,
     icon: Zap,
@@ -32,14 +33,16 @@ const plans = [
       "Toegang tot taakbord",
       "48 uur doorlooptijd",
     ],
-    cta: "Plan een gesprek",
+    cta: "Start risicovrij",
     color: "gray",
   },
   {
-    name: "Growth",
-    subtitle: "Voor groeiende bedrijven",
-    price: "1.499",
+    name: "Automate",
+    subtitle: "Slimmer werken met automations",
+    description: "Voor teams die bezig zijn met automatiseren",
+    price: "1.299",
     taken: 6,
+    bonusTaken: 1,
     hours: "~18 uur",
     popular: true,
     icon: Rocket,
@@ -51,14 +54,16 @@ const plans = [
       "24 uur doorlooptijd",
       "Maandelijkse call (optioneel)",
     ],
-    cta: "Plan een gesprek",
+    cta: "Start risicovrij",
     color: "violet",
   },
   {
-    name: "Scale",
-    subtitle: "Voor teams met veel werk",
-    price: "2.499",
+    name: "Transform",
+    subtitle: "Proactief digitaliseren",
+    description: "Voor bedrijven die hulp zoeken bij digitaliseren",
+    price: "2.199",
     taken: 12,
+    bonusTaken: 1,
     hours: "~36 uur",
     popular: false,
     icon: Building2,
@@ -70,7 +75,7 @@ const plans = [
       "Same-day voor urgente strippen",
       "Strategische sessies",
     ],
-    cta: "Plan een gesprek",
+    cta: "Start risicovrij",
     color: "gray",
   },
 ];
@@ -166,11 +171,18 @@ export default function Pricing() {
                     {plan.name}
                   </h3>
                   <p
-                    className={`text-sm mb-4 ${
-                      plan.popular ? "text-violet-200" : "text-gray-500"
+                    className={`text-sm font-medium mb-1 ${
+                      plan.popular ? "text-white/90" : "text-gray-700"
                     }`}
                   >
                     {plan.subtitle}
+                  </p>
+                  <p
+                    className={`text-xs mb-4 ${
+                      plan.popular ? "text-violet-200" : "text-gray-500"
+                    }`}
+                  >
+                    {plan.description}
                   </p>
 
                   {/* Taken badge */}
@@ -253,15 +265,20 @@ export default function Pricing() {
 
                 {/* CTA Button */}
                 <button
-                  onClick={openWaitlist}
-                  className={`group flex items-center justify-center gap-2 w-full py-4 rounded-xl font-semibold transition-all cursor-pointer ${
+                  onClick={() => openWaitlist(plan.name.toLowerCase() as "support" | "automate" | "transform")}
+                  className={`group flex flex-col items-center justify-center w-full py-3 rounded-xl transition-all cursor-pointer ${
                     plan.popular
                       ? "bg-white text-violet-700 hover:bg-violet-50 shadow-lg"
                       : "bg-gray-900 text-white hover:bg-gray-800"
                   }`}
                 >
-                  {plan.cta}
-                  <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  <span className="flex items-center gap-2 font-semibold">
+                    Start gratis
+                    <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
+                  </span>
+                  <span className={`text-xs ${plan.popular ? "text-violet-500" : "text-gray-400"}`}>
+                    de 1e strip is op ons
+                  </span>
                 </button>
               </div>
             </motion.div>
@@ -297,7 +314,7 @@ export default function Pricing() {
           <p className="text-gray-500">
             Meer strippen nodig?{" "}
             <button
-              onClick={openWaitlist}
+              onClick={() => openWaitlist("pricing")}
               className="block sm:inline mx-auto sm:mx-0 mt-1 sm:mt-0 text-violet-600 font-semibold hover:text-violet-700 transition-colors cursor-pointer"
             >
               Zet je op de wachtlijst

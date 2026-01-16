@@ -155,7 +155,7 @@ function ChatbotDemo() {
             <Bot className="w-4 h-4 text-violet-600" />
           </div>
           <div className="bg-white rounded-2xl rounded-tl-sm px-4 py-2 shadow-sm max-w-[80%]">
-            <p className="text-sm text-gray-700">We hebben 3 pakketten vanaf €799/mnd. Zal ik een demo inplannen?</p>
+            <p className="text-sm text-gray-700">We hebben 3 pakketten vanaf €699/mnd. Zal ik een demo inplannen?</p>
           </div>
         </div>
       </div>

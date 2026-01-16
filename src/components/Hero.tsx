@@ -6,6 +6,12 @@ import { motion } from "framer-motion";
 import { CheckCircle2, ArrowRight } from "lucide-react";
 import PropositionAnimation from "./PropositionAnimation";
 
+// Lazy load 3D component - heavy
+const GridScan = dynamic(
+  () => import("./ui/grid-scan").then((mod) => ({ default: mod.GridScan })),
+  { ssr: false }
+);
+
 // Lazy load modal - only needed on click
 const TaskModal = dynamic(() => import("./TaskModal"), { ssr: false });
 
@@ -37,31 +43,29 @@ export default function Hero() {
 
   return (
     <section className="relative z-10 overflow-hidden">
-      {/* Background */}
-      <div className="absolute inset-0 gradient-mesh" />
-      <div className="absolute inset-0 pattern-dots opacity-40" />
-      {/* Bottom fade to blend into next section */}
-      <div className="absolute bottom-0 left-0 right-0 h-40 bg-gradient-to-t from-white to-transparent" />
+      {/* 3D Grid Scan Background */}
+      <div className="absolute inset-0 bg-gray-950">
+        <GridScan
+          sensitivity={0.55}
+          lineThickness={1}
+          linesColor="#4c1d95"
+          gridScale={0.1}
+          scanColor="#a78bfa"
+          scanOpacity={0.5}
+          enablePost
+          bloomIntensity={0.6}
+          chromaticAberration={0.002}
+          noiseIntensity={0.01}
+        />
+      </div>
 
-      {/* Futuristic grid */}
-      <div
-        className="absolute inset-0 opacity-[0.04]"
-        style={{
-          backgroundImage: `
-            linear-gradient(to right, #8b5cf6 1px, transparent 1px),
-            linear-gradient(to bottom, #8b5cf6 1px, transparent 1px)
-          `,
-          backgroundSize: '60px 60px',
-        }}
-      />
+      {/* Overlay gradient for text readability - pointer-events-none allows hover on canvas */}
+      <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/10 to-black/50 pointer-events-none" />
 
-      {/* Floating shapes */}
-      <div className="absolute top-20 left-10 w-72 h-72 bg-violet-400/10 rounded-full blur-3xl animate-float" />
-      <div className="absolute bottom-20 right-10 w-96 h-96 bg-violet-400/10 rounded-full blur-3xl animate-float" style={{ animationDelay: "1.5s" }} />
-      <div className="absolute top-1/2 left-1/3 w-64 h-64 bg-violet-300/5 rounded-full blur-3xl" />
-      {/* Left side gradient extending into transition - temporarily removed */}
+      {/* Bottom fade for seamless transition to next section */}
+      <div className="absolute bottom-0 left-0 right-0 h-12 bg-gradient-to-t from-white to-transparent pointer-events-none" />
 
-      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-44 md:pt-52 pb-20">
+      <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 pt-44 md:pt-52 pb-20 pointer-events-none">
         <div className="grid lg:grid-cols-2 gap-12 lg:gap-16 items-center">
           {/* Left side - Content */}
           <motion.div
@@ -78,11 +82,11 @@ export default function Hero() {
                 transition={{ duration: 0.5, delay: 0.2 }}
                 className="overflow-hidden"
               >
-                <h1 className="text-gray-900 !text-4xl sm:!text-5xl lg:!text-6xl !font-semibold">
+                <h1 className="text-white !text-4xl sm:!text-5xl lg:!text-6xl !font-semibold drop-shadow-lg">
                   Je teams tech hulpje.
                 </h1>
-                <p className="mt-1 text-xl sm:text-2xl lg:text-3xl font-semibold text-violet-600">
-                  (Al vanaf €799 per maand)
+                <p className="mt-1 text-xl sm:text-2xl lg:text-3xl font-semibold text-violet-400">
+                  (Al vanaf €699 per maand)
                 </p>
               </motion.div>
             </div>
@@ -92,7 +96,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.3 }}
-              className="text-lg sm:text-xl text-gray-600 mb-8 max-w-xl mx-auto lg:mx-0"
+              className="text-lg sm:text-xl text-white/80 mb-8 max-w-xl mx-auto lg:mx-0"
             >
               Wij zorgen dat jouw team nooit meer hun tijd verspilt aan technische taken en vragen. Jullie gooien het over de schutting, wij regelen het.
             </motion.p>
@@ -107,12 +111,12 @@ export default function Hero() {
               {usps.map((usp, index) => (
                 <li
                   key={index}
-                  className="flex items-center gap-3 text-gray-700 justify-center lg:justify-start"
+                  className="flex items-center gap-3 text-white justify-center lg:justify-start"
                 >
                   <div className="flex-shrink-0 w-6 h-6 bg-green-500 rounded-full flex items-center justify-center shadow-lg shadow-green-500/25">
                     <CheckCircle2 className="w-4 h-4 text-white" />
                   </div>
-                  <span className="font-medium">{usp}</span>
+                  <span className="font-medium drop-shadow-sm">{usp}</span>
                 </li>
               ))}
             </motion.ul>
@@ -122,7 +126,7 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.45 }}
-              className="text-sm sm:text-base font-semibold text-violet-600 mb-6 text-center lg:text-left whitespace-nowrap"
+              className="text-sm sm:text-base font-semibold text-violet-400 mb-6 text-center lg:text-left whitespace-nowrap"
             >
               Van automatiseringen tot leadlijsten — wij fixen het.
             </motion.p>
@@ -136,20 +140,23 @@ export default function Hero() {
             >
               <a
                 href="#prijzen"
-                className="group inline-flex items-center justify-center gap-2 px-7 py-3.5 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white text-lg font-semibold rounded-xl transition-all shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105"
+                className="pointer-events-auto group inline-flex flex-col items-center justify-center px-7 py-3 bg-gradient-to-r from-violet-600 to-violet-700 hover:from-violet-700 hover:to-violet-800 text-white rounded-xl transition-all shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105"
               >
-                Bekijk aanbod
-                <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                <span className="flex items-center gap-2 text-lg font-semibold">
+                  Start gratis
+                  <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+                </span>
+                <span className="text-xs text-violet-200">de 1e strip is op ons</span>
               </a>
               <button
                 onClick={() => setIsModalOpen(true)}
-                className="group inline-flex flex-col items-center justify-center px-7 py-3 bg-white hover:bg-gray-50 text-gray-700 rounded-xl border border-gray-200 hover:border-gray-300 transition-all hover:scale-105"
+                className="pointer-events-auto group inline-flex flex-col items-center justify-center px-7 py-3 bg-white/10 backdrop-blur-sm hover:bg-white/20 text-white rounded-xl border border-white/20 hover:border-white/30 transition-all hover:scale-105"
               >
                 <span className="flex items-center gap-2 text-lg font-semibold">
                   Onze menukaart
-                  <ArrowRight className="w-5 h-5 text-violet-600 group-hover:translate-x-1 transition-transform" />
+                  <ArrowRight className="w-5 h-5 text-violet-400 group-hover:translate-x-1 transition-transform" />
                 </span>
-                <span className="text-xs text-gray-500">900+ veelgevraagde taken</span>
+                <span className="text-xs text-white/60">900+ veelgevraagde taken</span>
               </button>
             </motion.div>
 
@@ -159,16 +166,16 @@ export default function Hero() {
               initial={{ opacity: 0, y: 20 }}
               animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.5, delay: 0.6 }}
-              className="mt-6 pt-5 border-t border-gray-200"
+              className="mt-6 pt-5 border-t border-white/20"
             >
-              <div className="text-sm text-gray-500">
-                <span className="block mb-3 text-center lg:text-left font-medium text-gray-600">Populaire taken:</span>
+              <div className="text-sm text-white/60">
+                <span className="block mb-3 text-center lg:text-left font-medium text-white/80">Populaire taken:</span>
                 <div className="relative overflow-hidden w-full max-w-sm mx-auto lg:mx-0 mask-gradient">
                   <div className="flex w-max animate-marquee-fast">
                     {[...popularUseCases, ...popularUseCases].map((useCase, index) => (
                       <span
                         key={index}
-                        className="flex-shrink-0 px-4 py-1.5 mx-2 bg-violet-50 text-violet-600 font-medium rounded-full whitespace-nowrap text-sm"
+                        className="flex-shrink-0 px-4 py-1.5 mx-2 bg-white/10 text-white font-medium rounded-full whitespace-nowrap text-sm"
                       >
                         {useCase}
                       </span>

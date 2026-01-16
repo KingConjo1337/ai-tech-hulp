@@ -9,19 +9,19 @@ const steps = [
   {
     number: "1",
     title: "Vraag indienen",
-    description: "Via ons platform, direct in je overzicht",
+    description: "Via ons platform — met onze assistent maak je een duidelijke briefing zonder moeite",
     icon: Send,
   },
   {
     number: "2",
     title: "Wij pakken het op",
-    description: "Je ziet direct de status en voortgang",
+    description: "Geen meetings, gewoon actie. Je krijgt updates en een melding als het klaar is",
     icon: Wrench,
   },
   {
     number: "3",
-    title: "Klaar binnen 24-48 uur",
-    description: "Snel geregeld, zonder gedoe",
+    title: "Klaar voor je het weet",
+    description: "Soms binnen 5 minuten, altijd binnen 48 uur",
     icon: CheckCircle,
   },
 ];
@@ -47,7 +47,7 @@ export default function HowItWorks() {
             Hoe het werkt
           </h2>
           <p className="text-gray-600">
-            Simpel en snel, zonder gedoe
+            Simpel, snel, zonder gedoe — en zonder meetings
           </p>
         </motion.div>
 

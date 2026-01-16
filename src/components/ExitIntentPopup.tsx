@@ -2,13 +2,11 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Download, ArrowRight, CheckCircle2 } from "lucide-react";
+import { X, Gift, ArrowRight, CheckCircle2 } from "lucide-react";
 import { Particles } from "@/components/ui/highlighter";
 
 export default function ExitIntentPopup() {
   const [isVisible, setIsVisible] = useState(false);
-  const [email, setEmail] = useState("");
-  const [isSubmitted, setIsSubmitted] = useState(false);
   const [hasTriggered, setHasTriggered] = useState(false);
 
   useEffect(() => {
@@ -64,15 +62,6 @@ export default function ExitIntentPopup() {
     };
   }, [hasTriggered]);
 
-  const handleSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    console.log("Email submitted:", email);
-    setIsSubmitted(true);
-    setTimeout(() => {
-      setIsVisible(false);
-    }, 3000);
-  };
-
   const handleClose = () => {
     setIsVisible(false);
   };
@@ -115,74 +104,48 @@ export default function ExitIntentPopup() {
 
             {/* Content */}
             <div className="relative z-10 p-8 md:p-10">
-              {!isSubmitted ? (
-                <>
-                  {/* Icon */}
-                  <div className="flex justify-center mb-6">
-                    <div className="w-16 h-16 bg-violet-100 rounded-2xl flex items-center justify-center">
-                      <Download className="w-8 h-8 text-violet-600" />
-                    </div>
-                  </div>
-
-                  {/* Title */}
-                  <div className="text-3xl sm:text-4xl font-semibold text-gray-900 text-center mb-4 font-heading tracking-tight">
-                    Gratis: 20 AI-automations
-                  </div>
-                  <p className="text-gray-500 text-center mb-8 max-w-sm mx-auto">
-                    Download de checklist en deel hem met je team. Ontdek welke taken je kunt automatiseren.
-                  </p>
-
-                  {/* Benefits */}
-                  <div className="flex flex-wrap justify-center gap-3 mb-8">
-                    {["Direct toepasbaar", "Voor elk MKB", "Inclusief voorbeelden"].map((item, i) => (
-                      <div
-                        key={i}
-                        className="flex items-center gap-1.5 px-3 py-1.5 bg-violet-50 text-violet-700 rounded-full text-sm font-medium"
-                      >
-                        <CheckCircle2 className="w-3.5 h-3.5" />
-                        {item}
-                      </div>
-                    ))}
-                  </div>
-
-                  {/* Form */}
-                  <form onSubmit={handleSubmit} className="space-y-3">
-                    <input
-                      type="email"
-                      value={email}
-                      onChange={(e) => setEmail(e.target.value)}
-                      placeholder="je@email.nl"
-                      required
-                      className="w-full px-4 py-3.5 bg-gray-50 border border-gray-200 rounded-xl focus:outline-none focus:ring-2 focus:ring-violet-500 focus:border-transparent transition-all text-gray-900 placeholder:text-gray-400"
-                    />
-                    <button
-                      type="submit"
-                      className="w-full py-3.5 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
-                    >
-                      Download gratis checklist
-                      <ArrowRight className="w-4 h-4" />
-                    </button>
-                  </form>
-
-                  {/* Footer */}
-                  <p className="text-xs text-gray-400 text-center mt-4">
-                    Je ontvangt de checklist direct in je inbox.
-                  </p>
-                </>
-              ) : (
-                <div className="text-center py-8">
-                  <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
-                    <CheckCircle2 className="w-8 h-8 text-green-600" />
-                  </div>
-                  <h4 className="text-2xl font-bold text-gray-900 mb-2">
-                    Check je inbox!
-                  </h4>
-                  <p className="text-gray-500">
-                    De checklist is onderweg naar<br />
-                    <span className="font-medium text-gray-700">{email}</span>
-                  </p>
+              {/* Icon */}
+              <div className="flex justify-center mb-6">
+                <div className="w-16 h-16 bg-green-100 rounded-2xl flex items-center justify-center">
+                  <Gift className="w-8 h-8 text-green-600" />
                 </div>
-              )}
+              </div>
+
+              {/* Title */}
+              <div className="text-3xl sm:text-4xl font-semibold text-gray-900 text-center mb-4 font-heading tracking-tight">
+                Je eerste strip is gratis
+              </div>
+              <p className="text-gray-500 text-center mb-8 max-w-sm mx-auto">
+                Kies een taak uit onze lijst van 900+ opties. Alles tot 3 uur werk is gratis.
+              </p>
+
+              {/* Benefits */}
+              <div className="flex flex-wrap justify-center gap-3 mb-8">
+                {["Geen verplichtingen", "Binnen 48 uur klaar", "900+ taken"].map((item, i) => (
+                  <div
+                    key={i}
+                    className="flex items-center gap-1.5 px-3 py-1.5 bg-green-50 text-green-700 rounded-full text-sm font-medium"
+                  >
+                    <CheckCircle2 className="w-3.5 h-3.5" />
+                    {item}
+                  </div>
+                ))}
+              </div>
+
+              {/* CTA Button */}
+              <a
+                href="#taken-overzicht"
+                onClick={handleClose}
+                className="w-full py-3.5 bg-violet-600 hover:bg-violet-700 text-white font-semibold rounded-xl transition-colors flex items-center justify-center gap-2"
+              >
+                Bekijk alle taken
+                <ArrowRight className="w-4 h-4" />
+              </a>
+
+              {/* Footer */}
+              <p className="text-xs text-gray-400 text-center mt-4">
+                Kies een taak en wij regelen de rest.
+              </p>
             </div>
           </motion.div>
         </motion.div>

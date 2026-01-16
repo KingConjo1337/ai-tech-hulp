@@ -42,7 +42,7 @@ export default function StickyCTA() {
                   href="#prijzen"
                   className="flex-1 flex items-center justify-center gap-2 py-3 bg-gradient-to-r from-violet-600 to-violet-700 text-white font-semibold rounded-xl shadow-lg"
                 >
-                  Bekijk pakketten
+                  Start gratis
                   <ArrowRight className="w-5 h-5" />
                 </a>
                 <button

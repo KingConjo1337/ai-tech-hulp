@@ -2,32 +2,50 @@
 
 import { useState, useEffect } from "react";
 import { motion, AnimatePresence } from "framer-motion";
-import { X, Clock, Send, CheckCircle2, Phone } from "lucide-react";
+import { X, Clock, ArrowRight, CheckCircle2, Gift, Loader2 } from "lucide-react";
 import { Particles } from "@/components/ui/highlighter";
+
+type WaitlistSource = "hero" | "support" | "automate" | "transform" | "pricing" | "sticky" | "other";
 
 interface WaitlistModalProps {
   isOpen: boolean;
   onClose: () => void;
+  source?: WaitlistSource;
 }
 
-export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
+const packages = [
+  { value: "support", label: "Support", description: "€699/maand - 3 strippen" },
+  { value: "automate", label: "Automate", description: "€1.299/maand - 6 strippen" },
+  { value: "transform", label: "Transform", description: "€2.199/maand - 12 strippen" },
+];
+
+export default function WaitlistModal({ isOpen, onClose, source = "other" }: WaitlistModalProps) {
+  const [step, setStep] = useState(1);
   const [email, setEmail] = useState("");
   const [name, setName] = useState("");
+  const [role, setRole] = useState("");
   const [phone, setPhone] = useState("");
-  const [title, setTitle] = useState("");
-  const [submitted, setSubmitted] = useState(false);
+  const [interestedPackage, setInterestedPackage] = useState("");
   const [loading, setLoading] = useState(false);
+  const [error, setError] = useState("");
 
   // Reset state when modal opens
   useEffect(() => {
     if (isOpen) {
-      setSubmitted(false);
+      setStep(1);
       setEmail("");
       setName("");
+      setRole("");
       setPhone("");
-      setTitle("");
+      setError("");
+      // Pre-select package if source is a package name
+      if (["support", "automate", "transform"].includes(source)) {
+        setInterestedPackage(source);
+      } else {
+        setInterestedPackage("");
+      }
     }
-  }, [isOpen]);
+  }, [isOpen, source]);
 
   // Close on escape
   useEffect(() => {
@@ -38,15 +56,42 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
     return () => window.removeEventListener("keydown", handleEscape);
   }, [onClose]);
 
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleEmailSubmit = async (e: React.FormEvent) => {
+    e.preventDefault();
+    setError("");
+    setStep(2);
+  };
+
+  const handleFinalSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setLoading(true);
+    setError("");
 
-    // Simulate form submission - replace with actual form handler
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    try {
+      const response = await fetch("/api/waitlist", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          email,
+          name,
+          role,
+          phone,
+          interestedPackage,
+          source,
+        }),
+      });
 
-    setSubmitted(true);
-    setLoading(false);
+      if (!response.ok) {
+        const data = await response.json();
+        throw new Error(data.error || "Er ging iets mis");
+      }
+
+      setStep(3); // Success
+    } catch (err) {
+      setError(err instanceof Error ? err.message : "Er ging iets mis");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -88,9 +133,13 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
               </button>
 
               <div className="relative p-8">
-                {!submitted ? (
-                  <>
-                    {/* Header */}
+                {/* Step 1: Email */}
+                {step === 1 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                  >
                     <div className="text-center mb-6">
                       <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-violet-100 text-violet-700 rounded-full text-sm font-medium mb-4">
                         <Clock className="w-4 h-4" />
@@ -104,94 +153,148 @@ export default function WaitlistModal({ isOpen, onClose }: WaitlistModalProps) {
                       </p>
                     </div>
 
-                    {/* Form */}
-                    <form onSubmit={handleSubmit} className="space-y-3">
-                      <div>
-                        <input
-                          type="text"
-                          required
-                          value={name}
-                          onChange={(e) => setName(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-violet-300 focus:ring-2 focus:ring-violet-100 outline-none transition-all"
-                          placeholder="Je naam"
-                        />
+                    <form onSubmit={handleEmailSubmit} className="space-y-3">
+                      <input
+                        type="email"
+                        required
+                        value={email}
+                        onChange={(e) => setEmail(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-violet-300 focus:ring-2 focus:ring-violet-100 outline-none transition-all"
+                        placeholder="Je e-mailadres"
+                      />
+                      <button
+                        type="submit"
+                        className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-violet-600 text-white font-semibold rounded-xl hover:bg-violet-700 transition-colors"
+                      >
+                        Verder
+                        <ArrowRight className="w-4 h-4" />
+                      </button>
+                    </form>
+
+                    <div className="flex items-center justify-center gap-2 mt-5 pt-5 border-t border-gray-100">
+                      <Gift className="w-4 h-4 text-violet-500" />
+                      <p className="text-sm text-gray-500">
+                        Wachtlijst-leden krijgen een <span className="font-medium text-violet-600">extra beloning</span>
+                      </p>
+                    </div>
+                  </motion.div>
+                )}
+
+                {/* Step 2: More details */}
+                {step === 2 && (
+                  <motion.div
+                    initial={{ opacity: 0, x: 20 }}
+                    animate={{ opacity: 1, x: 0 }}
+                    exit={{ opacity: 0, x: -20 }}
+                  >
+                    <div className="text-center mb-6">
+                      <div className="inline-flex items-center gap-2 px-3 py-1.5 bg-green-100 text-green-700 rounded-full text-sm font-medium mb-4">
+                        <CheckCircle2 className="w-4 h-4" />
+                        Bijna klaar
                       </div>
-                      <div>
-                        <input
-                          type="text"
-                          value={title}
-                          onChange={(e) => setTitle(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-violet-300 focus:ring-2 focus:ring-violet-100 outline-none transition-all"
-                          placeholder="Je functie (bijv. CEO, Marketing Manager)"
-                        />
-                      </div>
-                      <div>
-                        <input
-                          type="email"
-                          required
-                          value={email}
-                          onChange={(e) => setEmail(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-violet-300 focus:ring-2 focus:ring-violet-100 outline-none transition-all"
-                          placeholder="Je e-mailadres"
-                        />
-                      </div>
-                      <div>
-                        <input
-                          type="tel"
-                          required
-                          value={phone}
-                          onChange={(e) => setPhone(e.target.value)}
-                          className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-violet-300 focus:ring-2 focus:ring-violet-100 outline-none transition-all"
-                          placeholder="Je 06 nummer"
-                        />
-                      </div>
+                      <h3 className="text-2xl md:text-3xl font-bold text-gray-900 mb-2">
+                        Nog een paar details
+                      </h3>
+                      <p className="text-gray-500">
+                        Zodat we je beter kunnen helpen
+                      </p>
+                    </div>
+
+                    <form onSubmit={handleFinalSubmit} className="space-y-3">
+                      <input
+                        type="text"
+                        required
+                        value={name}
+                        onChange={(e) => setName(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-violet-300 focus:ring-2 focus:ring-violet-100 outline-none transition-all"
+                        placeholder="Je naam"
+                      />
+                      <input
+                        type="text"
+                        value={role}
+                        onChange={(e) => setRole(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-violet-300 focus:ring-2 focus:ring-violet-100 outline-none transition-all"
+                        placeholder="Je rol (bijv. CEO, Marketing Manager)"
+                      />
+                      <select
+                        value={interestedPackage}
+                        onChange={(e) => setInterestedPackage(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 focus:bg-white focus:border-violet-300 focus:ring-2 focus:ring-violet-100 outline-none transition-all"
+                      >
+                        <option value="">Welk pakket heeft je interesse?</option>
+                        {packages.map((pkg) => (
+                          <option key={pkg.value} value={pkg.value}>
+                            {pkg.label} - {pkg.description}
+                          </option>
+                        ))}
+                      </select>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        className="w-full px-4 py-3 rounded-xl bg-gray-50 border border-gray-200 text-gray-900 placeholder-gray-400 focus:bg-white focus:border-violet-300 focus:ring-2 focus:ring-violet-100 outline-none transition-all"
+                        placeholder="Je telefoonnummer (optioneel)"
+                      />
+
+                      {error && (
+                        <p className="text-red-500 text-sm text-center">{error}</p>
+                      )}
+
                       <button
                         type="submit"
                         disabled={loading}
                         className="w-full flex items-center justify-center gap-2 px-6 py-4 bg-violet-600 text-white font-semibold rounded-xl hover:bg-violet-700 disabled:bg-violet-400 transition-colors"
                       >
                         {loading ? (
-                          "Even geduld..."
+                          <>
+                            <Loader2 className="w-4 h-4 animate-spin" />
+                            Even geduld...
+                          </>
                         ) : (
                           <>
-                            <Send className="w-4 h-4" />
                             Zet me op de wachtlijst
+                            <ArrowRight className="w-4 h-4" />
                           </>
                         )}
                       </button>
                     </form>
 
-                    {/* Direct contact */}
-                    <div className="flex items-center justify-center gap-4 mt-5 pt-5 border-t border-gray-100">
-                      <a href="tel:+31612345678" className="flex items-center gap-2 text-sm text-gray-500 hover:text-violet-600 transition-colors">
-                        <Phone className="w-4 h-4" />
-                        06 12 34 56 78
-                      </a>
-                      <span className="text-gray-300">•</span>
-                      <a href="mailto:hello@vliegendekiep.tech" className="text-sm text-gray-500 hover:text-violet-600 transition-colors">
-                        hello@vliegendekiep.tech
-                      </a>
-                    </div>
-                  </>
-                ) : (
-                  /* Success state */
-                  <div className="text-center py-4">
+                    <button
+                      onClick={() => setStep(1)}
+                      className="w-full text-center text-sm text-gray-400 hover:text-gray-600 mt-4"
+                    >
+                      Terug
+                    </button>
+                  </motion.div>
+                )}
+
+                {/* Step 3: Success */}
+                {step === 3 && (
+                  <motion.div
+                    initial={{ opacity: 0, scale: 0.95 }}
+                    animate={{ opacity: 1, scale: 1 }}
+                    className="text-center py-4"
+                  >
                     <div className="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
                       <CheckCircle2 className="w-8 h-8 text-green-600" />
                     </div>
                     <h3 className="text-2xl font-bold text-gray-900 mb-2">
                       Je staat op de lijst!
                     </h3>
-                    <p className="text-gray-500 mb-6">
-                      We nemen zo snel mogelijk contact met je op.
+                    <p className="text-gray-500 mb-4">
+                      We laten je weten zodra er plek is.
                     </p>
+                    <div className="inline-flex items-center gap-2 px-4 py-2 bg-violet-50 text-violet-700 rounded-full text-sm font-medium mb-6">
+                      <Gift className="w-4 h-4" />
+                      Je krijgt een mooie verrassing!
+                    </div>
                     <button
                       onClick={onClose}
-                      className="px-6 py-3 bg-violet-600 text-white font-semibold rounded-xl hover:bg-violet-700 transition-colors"
+                      className="block w-full px-6 py-3 bg-violet-600 text-white font-semibold rounded-xl hover:bg-violet-700 transition-colors"
                     >
                       Sluiten
                     </button>
-                  </div>
+                  </motion.div>
                 )}
               </div>
             </div>

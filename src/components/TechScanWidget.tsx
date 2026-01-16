@@ -311,7 +311,7 @@ export default function TechScanWidget() {
                   </p>
                   <div className="flex items-center gap-2 text-violet-600 font-semibold mb-6">
                     <Sparkles className="w-5 h-5" />
-                    <span>Vanaf €799/maand, maandelijks opzegbaar</span>
+                    <span>Vanaf €699/maand, maandelijks opzegbaar</span>
                   </div>
                 </div>
 

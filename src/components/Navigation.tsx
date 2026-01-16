@@ -5,6 +5,7 @@ import { motion, AnimatePresence } from "framer-motion";
 import { Menu, X } from "lucide-react";
 
 const navLinks = [
+  { href: "#taken-overzicht", label: "Alle taken" },
   { href: "#hoe-het-werkt", label: "Hoe het werkt" },
   { href: "#prijzen", label: "Prijzen" },
   { href: "#faq", label: "FAQ" },
@@ -68,8 +69,16 @@ export default function Navigation() {
               ))}
             </div>
 
-            {/* CTA Button */}
-            <div className="hidden md:flex items-center gap-4">
+            {/* CTA Buttons */}
+            <div className="hidden md:flex items-center gap-3">
+              <a
+                href="https://app.vliegendekeep.tech"
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-2 px-5 py-2.5 text-sm font-semibold text-violet-600 hover:text-violet-700 hover:bg-violet-50 rounded-full transition-all"
+              >
+                Klantportaal
+              </a>
               <a
                 href="#prijzen"
                 className="relative inline-flex items-center gap-2 px-6 py-2.5 bg-gradient-to-r from-violet-600 to-violet-700 text-white text-sm font-semibold rounded-full hover:from-violet-700 hover:to-violet-800 transition-all shadow-lg shadow-violet-500/25 hover:shadow-violet-500/40 hover:scale-105"
@@ -128,6 +137,15 @@ export default function Navigation() {
                     {link.label}
                   </a>
                 ))}
+                <a
+                  href="https://app.vliegendekeep.tech"
+                  target="_blank"
+                  rel="noopener noreferrer"
+                  onClick={() => setIsMobileMenuOpen(false)}
+                  className="block w-full py-3 px-4 text-center text-violet-600 font-semibold border border-violet-200 rounded-xl hover:bg-violet-50 transition-all"
+                >
+                  Klantportaal
+                </a>
                 <a
                   href="#prijzen"
                   onClick={() => setIsMobileMenuOpen(false)}
