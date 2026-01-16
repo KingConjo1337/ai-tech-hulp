@@ -4,6 +4,7 @@ import localFont from "next/font/local";
 import "./globals.css";
 import { WaitlistProvider } from "@/context/WaitlistContext";
 import ClientLayout from "@/components/ClientLayout";
+import { PostHogProvider } from "@/components/PostHogProvider";
 
 const rethinkSans = Rethink_Sans({
   subsets: ["latin"],
@@ -87,11 +88,13 @@ export default function RootLayout({
   return (
     <html lang="nl" className="scroll-smooth overflow-x-hidden">
       <body className={`${rethinkSans.variable} ${clashGrotesk.variable} antialiased font-sans overflow-x-hidden`}>
-        <WaitlistProvider>
-          <ClientLayout>
-            {children}
-          </ClientLayout>
-        </WaitlistProvider>
+        <PostHogProvider>
+          <WaitlistProvider>
+            <ClientLayout>
+              {children}
+            </ClientLayout>
+          </WaitlistProvider>
+        </PostHogProvider>
       </body>
     </html>
   );
